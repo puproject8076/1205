@@ -30,4 +30,5 @@ COPY . .
 EXPOSE 5000
 
 # 啟動方式（gunicorn 穩定度最高）
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-w", "1", "--timeout", "180", "--max-requests", "10", "--max-requests-jitter", "5", "-b", "0.0.0.0:5000", "app:app"]
+
