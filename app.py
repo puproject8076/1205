@@ -697,28 +697,34 @@ def process_invoice():
                 args=[
                     "--no-sandbox",
                     "--disable-setuid-sandbox",
-                    "--disable-dev-shm-usage",        # 解決 /dev/shm 太小
+                    "--disable-dev-shm-usage",
                     "--disable-gpu",
+                    "--disable-software-rasterizer",
+                    "--disable-dev-tools",
                     "--no-zygote",
-                    "--single-process",               # 容器內最省記憶體
+                    "--single-process",                  # 關鍵！單進程省 200MB+
                     "--disable-extensions",
                     "--disable-background-networking",
                     "--disable-sync",
                     "--disable-translate",
-                    "--disable-features=site-per-process,TranslateUI,BlinkGenPropertyTrees",
-                    "--window-size=1920,1080",
-                    "--font-render-hinting=none",# 設定視窗大小，避免尺寸異常
+                    "--disable-features=TranslateUI,ImproveInIncognito",
+                    "--disable-ipc-flooding-protection",
+                    "--disable-hang-monitor",
+                    "--disable-prompt-on-repost",
+                    "--disable-domain-reliability",
+                    "--disable-infobars",
+                    "--memory-pressure-off",
+                    "--max_old_space_size=256",          # 強制限制 JS heap
+                    "--js-flags=--jitless --no-expose-wasm",# 設定視窗大小，避免尺寸異常
                 ]
             )
             context = browser.new_context(
-                viewport={"width": 1920, "height": 1080},
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-                locale="zh-TW",
-                timezone_id="Asia/Taipei",
+                viewport={"width": 800, "height": 600},  # 越小越省
                 java_script_enabled=True,
                 bypass_csp=True,
             )
             page = context.new_page()
+            page.set_default_timeout(30000)
 
             success = try_full_process_with_retry(page)
 
